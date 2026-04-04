@@ -1,0 +1,9 @@
+{
+	"name": "adf-rest-api-ingestion-dev",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "8afea69c-1daf-4b60-aa9b-d0179f766df6",
+		"tenantId": "86a25666-904e-4d07-81e7-660bfb3ae9d2"
+	}
+}

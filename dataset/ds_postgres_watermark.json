@@ -1,0 +1,35 @@
+{
+	"name": "ds_postgres_watermark",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_postgres_metadata",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzurePostgreSqlTable",
+		"schema": [
+			{
+				"name": "source_name",
+				"type": "text",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "last_watermark",
+				"type": "bigint",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "updated_at",
+				"type": "timestamp without time zone",
+				"precision": 0,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "public",
+			"table": "ingestion_watermark"
+		}
+	}
+}

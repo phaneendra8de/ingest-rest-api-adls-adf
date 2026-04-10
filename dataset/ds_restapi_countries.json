@@ -1,0 +1,23 @@
+{
+	"name": "ds_restapi_countries",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_restapi_rest_countries",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_relative_url": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().p_relative_url",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}

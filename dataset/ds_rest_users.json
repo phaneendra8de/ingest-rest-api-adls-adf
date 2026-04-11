@@ -6,12 +6,6 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"p_limit": {
-				"type": "int"
-			},
-			"p_skip": {
-				"type": "int"
-			},
 			"p_relative_url": {
 				"type": "string",
 				"defaultValue": "/users"

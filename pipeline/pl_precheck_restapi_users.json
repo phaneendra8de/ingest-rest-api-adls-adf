@@ -33,7 +33,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@equals(activity('act_check_api').output.statusCode,200)",
+						"value": "@equals(activity('act_check_api').output.ADFHttpStatusCodeInResponse,'200')",
 						"type": "Expression"
 					},
 					"ifFalseActivities": [

@@ -1,0 +1,59 @@
+{
+	"name": "pl_precheck_restapi_users",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_check_api",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": "https://dummyjson.com/users?limit=1"
+				}
+			},
+			{
+				"name": "act_validate_response",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "act_check_api",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('act_check_api').output.statusCode,200)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "act_fail_pipeline",
+							"type": "Fail",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"message": "API is not reachable or returned invalid response",
+								"errorCode": {
+									"value": "@activity('act_check_api').output.statusCode",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"name": "ds_pg_logging",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_postgres_db",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzurePostgreSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "public",
+			"table": "etl_pipeline_run_log"
+		}
+	}
+}

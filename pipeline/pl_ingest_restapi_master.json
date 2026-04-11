@@ -1,0 +1,150 @@
+{
+	"name": "pl_ingest_restapi_master",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_log_master_start",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_postgres_db",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "INSERT INTO etl_pipeline_run_log (\n    pipeline_name,\n    pipeline_run_id,\n    load_type,\n    status,\n    start_time\n)\nVALUES (\n    'pl_ingest_restapi_master',\n    '@{pipeline().RunId}',\n    '@{pipeline().parameters.p_load_type}',\n    'RUNNING',\n    CURRENT_TIMESTAMP\n);"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "act_precheck",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "act_log_master_start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_precheck_restapi_users",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "act_ingest_bronze",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "act_precheck",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_ingest_restapi_users_bronze",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "act_post_validation",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "act_ingest_bronze",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_post_ingest_validation_bronze",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "act_log_master_success",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "act_post_validation",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_postgres_db",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "UPDATE etl_pipeline_run_log\nSET \n    status = 'SUCCESS',\n    end_time = CURRENT_TIMESTAMP\nWHERE pipeline_run_id = '@{pipeline().RunId}';"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"parameters": {
+			"p_base_url": {
+				"type": "string",
+				"defaultValue": "/users"
+			},
+			"p_load_type": {
+				"type": "string",
+				"defaultValue": "FULL"
+			},
+			"p_limit": {
+				"type": "int",
+				"defaultValue": 10
+			}
+		},
+		"annotations": []
+	}
+}

@@ -59,25 +59,6 @@
 								},
 								"ifFalseActivities": [
 									{
-										"name": "act_stop_loop",
-										"type": "SetVariable",
-										"dependsOn": [],
-										"policy": {
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "v_has_more",
-											"value": {
-												"value": "@false",
-												"type": "Expression"
-											}
-										}
-									}
-								],
-								"ifTrueActivities": [
-									{
 										"name": "act_copy_api_to_adls",
 										"type": "Copy",
 										"dependsOn": [],
@@ -255,6 +236,25 @@
 											"variableName": "v_file_counter",
 											"value": {
 												"value": "@variables('v_next_file_counter')",
+												"type": "Expression"
+											}
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "act_stop_loop",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "v_has_more",
+											"value": {
+												"value": "@false",
 												"type": "Expression"
 											}
 										}

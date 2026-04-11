@@ -1,0 +1,30 @@
+{
+	"name": "ds_rest_users",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_rest_dummyjson",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_limit": {
+				"type": "int"
+			},
+			"p_skip": {
+				"type": "int"
+			},
+			"p_relative_url": {
+				"type": "string",
+				"defaultValue": "/users"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().p_relative_url",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}

@@ -1,0 +1,86 @@
+{
+	"name": "pl_ingest_restapi_raw_extract_full",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_copy_full_data",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET"
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_restapi_jsonplaceholder",
+						"type": "DatasetReference",
+						"parameters": {
+							"p_relative_url": {
+								"value": "@pipeline().parameters.p_relative_url",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_adls_raw_json_sink",
+						"type": "DatasetReference",
+						"parameters": {
+							"p_target_path": {
+								"value": "@pipeline().parameters.p_target_path",
+								"type": "Expression"
+							},
+							"p_file_name": {
+								"value": "@pipeline().parameters.p_file_name",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"p_source_name": {
+				"type": "string",
+				"defaultValue": "rest_jsonplaceholder_users"
+			},
+			"p_relative_url": {
+				"type": "string",
+				"defaultValue": "/users"
+			},
+			"p_target_path": {
+				"type": "string",
+				"defaultValue": "restapi/users"
+			},
+			"p_file_name": {
+				"type": "string",
+				"defaultValue": "users_20260411.json"
+			}
+		},
+		"annotations": []
+	}
+}

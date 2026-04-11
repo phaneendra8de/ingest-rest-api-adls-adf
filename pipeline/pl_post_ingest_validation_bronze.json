@@ -1,0 +1,72 @@
+{
+	"name": "pl_post_ingest_validation_bronze",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_check_files",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_adls_users_bronze",
+						"type": "DatasetReference",
+						"parameters": {
+							"p_folder_path": "/users",
+							"p_file_name": "*"
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "JsonReadSettings"
+					}
+				}
+			},
+			{
+				"name": "act_validate_files",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "act_check_files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(length(activity('act_check_files').output.childItems),0)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "act_fail_no_files",
+							"type": "Fail",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"message": "No files found in ADLS after ingestion",
+								"errorCode": "DATA_INGEST_NO_FILES"
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}
